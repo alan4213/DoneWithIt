@@ -1,7 +1,11 @@
-
+// React Native App Intro Slider using AppIntroSlider
+// https://aboutreact.com/react-native-app-intro-slider/
+// Simple Intro Slider
+ 
+// import React in our code
 import React, {useState} from 'react';
  
-
+// import all the components we are going to use
 import {
   SafeAreaView,
   StyleSheet,
@@ -24,7 +28,10 @@ const HomeScreen = ({navigation}) => {
   const onSkip = () => {
     setShowRealApp(true);
   };
-  
+  const OnDas=()=>{
+    <Button style={{marginLeft:10}}
+    title="Login as Student"/>
+  }
   const renderSkipButton = () => {
     return (
       <Button >Continue</Button>
@@ -44,12 +51,14 @@ const HomeScreen = ({navigation}) => {
         <Text style={styles.introTitleStyle}>
           {item.title}
         </Text>
-       
+        <Image
+          style={styles.introImageStyle}
+          source={item.image} />
             {
             item.key=='s1' && (
-             <TouchableOpacity style={{borderRadius:10,backgroundColor:'#20d2bb',height:50,paddingLeft:24,paddingTop:12,width:170,marginTop:-150}}
-               onPress={() => navigation.navigate('StudentLogin')}>
-                 <Text style={{color:'white',fontWeight:'bold'}}>{"Login As Student"}</Text>
+             <TouchableOpacity style={{borderRadius:10,backgroundColor:'green',height:50,padding:10,width:150,marginTop:-70}}
+               onPress={() => navigation.navigate('Login')}>
+                 <Text>{"Get Started"}</Text>
              </TouchableOpacity>
             )
         }
@@ -57,10 +66,9 @@ const HomeScreen = ({navigation}) => {
        
         {
             item.key=='s2' && (
-              <TouchableOpacity style={{borderRadius:10,backgroundColor:'#3395ff',height:50,paddingLeft:24,paddingTop:12,width:170,marginTop:-150}}
-              onPress={() => navigation.navigate('TeacherLogin')}>
-                <Text style={{color:'white',fontWeight:'bold'}}>{"Login As Teacher"}</Text>
-            </TouchableOpacity>
+             <TouchableOpacity style={{borderRadius:10,backgroundColor:'green',height:50,padding:10,width:150}}>
+                <Text>{"Get Started"}</Text>
+             </TouchableOpacity>
             )
         }
       </View>
@@ -103,9 +111,8 @@ const HomeScreen = ({navigation}) => {
           renderItem={RenderItem}
           onDone={onDone}
           showNextButton={false}
-          showDoneButton={false}
           onSkip={onSkip}
-          
+          onDas={OnDas}
           bottomButton={true}
           renderNextButton={_renderNextButton}
         />
@@ -127,9 +134,8 @@ const styles = StyleSheet.create({
   titleStyle: {
     padding: 10,
     textAlign: 'center',
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
-    
   },
   paragraphStyle: {
     padding: 20,
@@ -141,22 +147,22 @@ const styles = StyleSheet.create({
     height: 200,
   },
   introTextStyle: {
-    fontSize: 24,
+    fontSize: 18,
     color: 'white',
     textAlign: 'center',
     paddingVertical: 30,
   },
   introTitleStyle: {
-    fontSize: 35,
-    color: 'purple',
+    fontSize: 25,
+    color: 'white',
     textAlign: 'center',
-    marginBottom: 100,
+    marginBottom: 16,
     fontWeight: 'bold',
   },
   buttonCircle: {
     width: 40,
     height: 40,
-    backgroundColor:'red',
+    backgroundColor: 'rgba(0, 0, 0, .2)',
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
@@ -166,24 +172,24 @@ const styles = StyleSheet.create({
 const slides = [
   {
     key: 's1',
-    
-    title: 'Point Plus+',
+    text: 'Best Recharge offers',
+    title: 'Mobile Recharge',
     image: {
       uri:
-      'https://cdn-icons-png.flaticon.com/512/3068/3068421.png',
+        'https://raw.githubusercontent.com/AboutReact/sampleresource/master/intro_mobile_recharge.png',
     },
-    backgroundColor: 'white',
+    backgroundColor: '#20d2bb',
      
   },
   {
     key: 's2',
-    title: 'Point Plus+',
-   
+    title: 'Flight Booking',
+    text: 'Upto 25% off on Domestic Flights',
     image: {
       uri:
-        'https://cdn-icons-png.flaticon.com/512/1995/1995539.png',
+        'https://raw.githubusercontent.com/AboutReact/sampleresource/master/intro_flight_ticket_booking.png',
     },
-    backgroundColor: 'white'
+    backgroundColor: '#febe29',
   },
   
  

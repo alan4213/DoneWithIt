@@ -17,6 +17,10 @@ import {
     Platform, Image
 } from 'react-native';
 
+import { useEffect } from 'react';
+import * as SQLite from 'expo-sqlite';
+const db = SQLite.openDatabase('pointplus1.db');// returns Database object
+
 const department = [
     { label1: 'IT', value1: 'IT' },
     { label1: 'CS', value1: 'CS' },
@@ -56,6 +60,17 @@ const TeacherRegistrationScreen = () => {
     const [value3, setValue3] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
 
+    const renderLabel = () => {
+        if (value1 || isFocus) {
+            return (
+                <Text style={{ fontWeight: 'bold', fontSize: 15 }}>
+
+                </Text>
+            );
+        }
+        return null;
+    };
+
     let registerOnPress = () => {
         console.log(name, email, password, value1, value2, value3);
 
@@ -84,35 +99,33 @@ const TeacherRegistrationScreen = () => {
             return;
         }
 
-        Alert.alert(
-            'Success',
-            'You are Registered Successfully',
-            [
-                {
-                    text: 'Ok',
-                    onPress: () => { },
-                },
-            ],
-            { cancelable: false }
-        );
-        setName('');
-        setPassword('');
-        setEmail('');
-        setValue1(null);
-        setValue2(null);
-        setValue3(null);
-    };
-
-
-    const renderLabel = () => {
-        if (value1 || isFocus) {
-            return (
-                <Text style={{ fontWeight: 'bold', fontSize: 15 }}>
-
-                </Text>
+        db.transaction(function (tx) {
+            tx.executeSql(
+                'INSERT INTO teacher_table (teacher_name, teacher_dept, teacher_sem, teacher_div, teacher_email, teacher_password) VALUES (?,?,?,?,?,?)',
+                [name, value1, value2, value3, email, password],
+                (tx, results) => {
+                    if (results.rowsAffected > 0) {
+                        Alert.alert(
+                            'Success',
+                            'You are Registered Successfully',
+                            [
+                                {
+                                    text: 'Ok',
+                                    onPress: () => { },
+                                },
+                            ],
+                            { cancelable: false }
+                        );
+                    } else alert('Registration Failed');
+                    setName('');
+                    setValue1(null);
+                    setValue2(null);
+                    setValue3(null);
+                    setPassword('');
+                    setEmail('');
+                }
             );
-        }
-        return null;
+        });
     };
 
     return (

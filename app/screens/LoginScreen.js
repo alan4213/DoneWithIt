@@ -1,181 +1,209 @@
 import React, { useState } from "react";
-import { TextInput } from "react-native-paper";
 
 import {
   StyleSheet,
   Text,
   View,
   Image,
-  
+  TextInput,
+  Alert,
   Button,
   TouchableOpacity,
 } from "react-native";
- 
-const LoginScreen = ({navigation})=> {
+
+import * as SQLite from 'expo-sqlite';
+const db = SQLite.openDatabase('pointplus1.db');// returns Database object
+
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
- 
-  return (
-    
-    <View style={styles.container}>
-      
-    
 
-       <TouchableOpacity>
+  let loginOnPress = () => {
+    console.log("i/p:", email, password);
+    if (!email) {
+      alert('Please fill Email');
+      return;
+    }
+    if (!password) {
+      alert('Please fill password');
+      return;
+    }
+
+    db.transaction((tx) => {
+      tx.executeSql(
+        'SELECT * FROM student_table where student_email = ? AND student_password = ?',
+        [email, password],
+        (tx, results) => {
+          var len = results.rows.length;
+          if (len > 0) {
+            let res = results.rows.item(0);
+            console.log('found:', res);
+            navigation.navigate('StudentDashboard', { name: res.student_name, sid: res.student_id, email: res.student_email, department: res.student_dept, sem: res.student_sem, div: res.student_div });
+
+          } else {
+            alert('No user found');
+
+          }
+          setEmail('');
+          setPassword('');
+        }
+      );
+    });
+
+  };
+
+  return (
+
+    <View style={styles.container}>
+
+
+
+      <TouchableOpacity>
         <Text style={styles.logo_button}>Point Plus+ </Text>
       </TouchableOpacity>
 
-       
-    
-    
-       
-    
+
+
+
+
+
       <View style={styles.inputView}>
         <TextInput
           style={styles.TextInput}
+          value={email}
           placeholder="Username"
           placeholderTextColor="grey"
           onChangeText={(email) => setEmail(email)}
-          left={<TextInput.Icon name="account"/>}
         />
       </View>
- 
+
       <View style={styles.inputView}>
         <TextInput
           style={styles.TextInput}
+          value={password}
           placeholder="Password"
           placeholderTextColor="grey"
           secureTextEntry={true}
           onChangeText={(password) => setPassword(password)}
-          left={<TextInput.Icon name="lock"/>}
         />
       </View>
- 
+
       <TouchableOpacity>
-        <Text style={styles.forgot_button}>Forgot Password?</Text>
+        <Text style={styles.forgot_button}>                            Forgot Password?</Text>
       </TouchableOpacity>
-        
-      <TouchableOpacity style={styles.loginBtn} onPress={() => navigation.navigate('StudentDashboard')}>
+
+      <TouchableOpacity style={styles.loginBtn} onPress={loginOnPress}>
         <Text style={styles.loginText}>Login</Text>
       </TouchableOpacity>
 
-     
+      <TouchableOpacity>
+        <Text style={styles.logo_button}>--------------</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity style={styles.sign_inBtn}>
         <Text style={styles.loginText}>Sign in With Google</Text>
-      </TouchableOpacity> 
-      <View style={{flexDirection:'row',marginTop:50}}>
-      <Text style={{marginBottom: -10,marginTop:20}}>Dont have an account already? </Text>
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.signup_button}>Sign Up </Text>   
-      </TouchableOpacity></View>
-     
+      </TouchableOpacity>
+      <View style={{ flexDirection: 'row' }}>
+        <Text style={{ marginBottom: 30, marginTop: 20 }}>Dont have an account already? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+          <Text style={styles.signup_button}>Sign Up </Text>
+        </TouchableOpacity></View>
 
-      
-      
+
+
+
     </View>
   );
 }
- export default LoginScreen;
- const styles = StyleSheet.create({
+export default LoginScreen;
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-   
+
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#ffffff",
     borderRadius: 15,
-    
+
   },
- 
- 
- 
+
+
+
   inputView: {
-    
-   
+    backgroundColor: "#ffffff",
+    borderRadius: 10,
     width: "70%",
     height: 45,
     marginBottom: 20,
-  
-     marginTop:20,
+    borderWidth: 3,
+    borderColor: '#000000',
+
     alignItems: "center",
   },
- 
+
   TextInput: {
     height: 50,
     flex: 1,
-    padding: 3,
-    marginLeft: -5,
-    marginTop:-10,
-    width:330,
-    borderRadius:5,shadowColor:'#171717',
-    shadowOffset:{width:8,height:8},
-    shadowOpacity:0.2,
-    shadowRadius:3,
-
-    
+    padding: 10,
+    marginLeft: 20,
   },
- 
+
   forgot_button: {
     height: 30,
     marginBottom: 30,
-    marginRight:-200,
-     color:"#000000",
-    
+    color: "#000000",
+
   },
 
-    signup_button: {
+  signup_button: {
     height: 30,
     marginBottom: 30,
-     color:"blue",
+    color: "blue",
     marginTop: 20,
   },
 
   logo_button: {
-      height: 50,
+    height: 50,
     marginBottom: 50,
-    marginTop:-10,
     fontSize: 35,
-    color:"#000080"
-    
+    color: "#000080"
+
 
   },
- 
+
   loginBtn: {
     width: "80%",
-    borderRadius: 10,
+    borderRadius: 15,
     height: 50,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 20,
-    backgroundColor: "#3395ff",
-     borderWidth:3,
-     borderColor:'#000000',
+    backgroundColor: "#332FD0",
+    borderWidth: 3,
+    borderColor: '#000000',
   },
 
-  loginText:{
-  
-   color:"#ffffff",
+  loginText: {
+
+    color: "#ffffff",
 
   },
-    sign_inBtn: {
+  sign_inBtn: {
     width: "80%",
-    borderRadius: 10,
+    borderRadius: 15,
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 50,
+    marginTop: 20,
     backgroundColor: "#808080",
-     borderWidth:3,
-     borderColor:'#000000',
-     
+    borderWidth: 3,
+    borderColor: '#000000',
+
   },
-  
-  
+
+
 }
 
 
 
 );
-           
